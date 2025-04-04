@@ -3,8 +3,10 @@ import { useParams, NavLink } from "react-router-dom";
 import axios from "../../config/axiosConfig";
 import { toast } from 'react-toastify';
 
-const urlMonthlyHistory = "monthlypayments/"
-const urlUserAnnualHistory = "annualpayments/"
+const urlFullMonthlyHistory = "monthlypayments/fullmonthlyhistory/"
+const urlDelMonthlyPayment = "monthlypayments/delmonthlypayment/"
+const urlFullAnnualHistory = "annualpayments/fullannualhistory/"
+const urlDelAnnualPayment = "annualpayments/delannualpayment/"
 const urlUserInscriptionHistory = "inscriptions/"
 const urlUserMerchHistory = "merchrequests/"
 
@@ -16,42 +18,77 @@ export default function DebtorPaymentsHistory() {
     const [inscriptionHistory, setInscriptionHistory] = useState([])
     const meses = [" ", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"];
 
+    function fetchMonthlyHistory(uid) {
+        axios.get(urlFullMonthlyHistory + uid)
+            .then(response => {
+                setMonthlyPaymentsHistory(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+            })
+    }
+
+    function fetchAnnualHistory(uid) {
+        axios.get(urlFullAnnualHistory + uid)
+            .then(response => {
+                setAnnualPaymentsHistory(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+            })
+    }
+
+    function fetchInscriptionHistory(uid) {
+        axios.get(urlUserInscriptionHistory + uid)
+            .then(response => {
+                setInscriptionHistory(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+            })
+    }
+
+    function fetchMerchHistory(uid) {
+        axios.get(urlUserMerchHistory + uid)
+            .then(response => {
+                setMerchHistory(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+            })
+    }
+
+    function deleteMonthlyPayment(mid) {
+        axios.delete(urlDelMonthlyPayment + mid)
+            .then(response => {
+                fetchMonthlyHistory(uid);
+            })
+            .catch(error => {
+                console.log(error);
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+            })
+    }
+    
+    function deleteAnnualPayment(aid) {
+        axios.delete(urlDelAnnualPayment + aid)
+            .then(response => {
+                fetchAnnualHistory(uid);
+            })
+            .catch(error => {
+                console.log(error);
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+            })
+    }
+
     useEffect(() => {
-        function axiosData() {
-            axios.get(urlMonthlyHistory + uid)
-                            .then(response => {
-                                setMonthlyPaymentsHistory(response.data);
-                            })
-                            .catch(error => {
-                                console.log(error);
-                                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
-                            })
-                        axios.get(urlUserAnnualHistory + uid)
-                            .then(response => {
-                                setAnnualPaymentsHistory(response.data);
-                            })
-                            .catch(error => {
-                                console.log(error);
-                                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
-                            })
-                        axios.get(urlUserInscriptionHistory + uid)
-                            .then(response => {
-                                setInscriptionHistory(response.data);
-                            })
-                            .catch(error => {
-                                console.log(error);
-                                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
-                            })
-                        axios.get(urlUserMerchHistory + uid)
-                            .then(response => {
-                                setMerchHistory(response.data);
-                            })
-                            .catch(error => {
-                                console.log(error);
-                                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
-                            })
-        }
-        axiosData();
+        fetchMonthlyHistory(uid);
+        fetchAnnualHistory(uid);
+        fetchInscriptionHistory(uid);
+        fetchMerchHistory(uid);
     }, []);
 
     return (
@@ -65,6 +102,7 @@ export default function DebtorPaymentsHistory() {
                     <table>
                         <thead>
                             <tr>
+                                <th>Borrar</th>
                                 <th>Fecha del registro</th>
                                 <th>Mes</th>
                                 <th>Año</th>
@@ -75,7 +113,8 @@ export default function DebtorPaymentsHistory() {
                             {
                                 monthlyPaymentsHistory.map((payment) => (
                                     <tr key={payment.id_payment}>
-                                        <th>{new Date(payment.pay_date).toLocaleDateString('en-GB')}</th>
+                                        <th><button className="delete-event-button" onClick={() => { deleteMonthlyPayment(payment.id_payment) }}>X</button></th>
+                                        <th>{new Date(payment.pay_date).toLocaleDateString('en-GB', {timeZone: 'UTC'})}</th>
                                         <th>{meses[payment.month_paid]}</th>
                                         <th>{payment.year_paid}</th>
                                     </tr>
@@ -91,6 +130,7 @@ export default function DebtorPaymentsHistory() {
                     <table>
                         <thead>
                             <tr>
+                                <th>Borrar</th>
                                 <th>Fecha del registro</th>
                                 <th>Año</th>
                             </tr>
@@ -100,7 +140,8 @@ export default function DebtorPaymentsHistory() {
                             {
                                 annualPaymentsHistory.map((payment) => (
                                     <tr key={payment.id_payment}>
-                                        <th>{new Date(payment.pay_date).toLocaleDateString('en-GB')}</th>
+                                        <th><button className="delete-event-button" onClick={() => { deleteAnnualPayment(payment.id_payment) }}>X</button></th>
+                                        <th>{new Date(payment.pay_date).toLocaleDateString('en-GB', {timeZone: 'UTC'})}</th>
                                         <th>{payment.year_paid}</th>
                                     </tr>
                                 ))
@@ -124,9 +165,9 @@ export default function DebtorPaymentsHistory() {
                             {
                                 inscriptionHistory.map((insc) => (
                                     <tr key={insc.id_inscription}>
-                                        <th>{new Date(insc.event_date).toLocaleDateString('en-GB')}</th>
+                                        <th>{new Date(insc.event_date).toLocaleDateString('en-GB', {timeZone: 'UTC'})}</th>
                                         <th>{insc.event_name}</th>
-                                        <th>{new Date(insc.pay_date).toLocaleDateString('en-GB')}</th>
+                                        <th>{new Date(insc.pay_date).toLocaleDateString('en-GB', {timeZone: 'UTC'})}</th>
                                     </tr>
                                 ))
                             }
@@ -149,9 +190,9 @@ export default function DebtorPaymentsHistory() {
                             {
                                 merchHistory.map((merch) => (
                                     <tr key={merch.id_request}>
-                                        <th>{new Date(merch.req_date).toLocaleDateString('en-GB')}</th>
+                                        <th>{new Date(merch.req_date).toLocaleDateString('en-GB', {timeZone: 'UTC'})}</th>
                                         <th>{merch.req_description}</th>
-                                        <th>{new Date(merch.pay_date).toLocaleDateString('en-GB')}</th>
+                                        <th>{new Date(merch.pay_date).toLocaleDateString('en-GB', {timeZone: 'UTC'})}</th>
                                     </tr>
                                 ))
                             }
@@ -160,7 +201,7 @@ export default function DebtorPaymentsHistory() {
 
                     </table>}
             </section>
-            <NavLink to={`/administrationdebtors`} className="info-button">Volver</NavLink>
+            <NavLink to={`/administrationpayments`} className="info-button">Volver</NavLink>
         </div>
     )
 }

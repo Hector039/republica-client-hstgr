@@ -265,7 +265,7 @@ export default function MasInfo() {
             <div className="products-container">
                 <div className="table_container">
                     <h2>Eventos, Inscripciones y Beneficios</h2>
-                    {events.length != 0 && (user && featureEventPosition) ?
+                    {user && featureEventPosition ?
                         <table>
                             <thead>
                                 <tr>

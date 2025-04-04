@@ -70,9 +70,8 @@ export default function SystemMerch() {
         axiosData();
     }, [])
 
-/* 
     function deleteMerchRequest(mid) {
-        axios.delete(urlMerchRequests + mid, { withCredentials: true })
+        axios.delete(urlMerchRequests + mid)
             .then(response => {
                 toast.success('Se eliminó la solicitud correctamente.');
                 fetchMerch();
@@ -82,7 +81,7 @@ export default function SystemMerch() {
                 console.log(error)
             })
     }
- */
+    
     function payPartialMerchRequest(mid) {
         const payDate = date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate())
         const amount = amounts[mid] || "";
@@ -142,6 +141,7 @@ export default function SystemMerch() {
                     <table>
                         <thead>
                             <tr>
+                                <th>Borrar</th>
                                 <th>Nombre</th>
                                 <th>Apellido</th>
                                 <th>Teléfono</th>
@@ -157,6 +157,7 @@ export default function SystemMerch() {
                             {
                                 merchRequests.map((merchReq) => (
                                     <tr key={merchReq.id_request}>
+                                        <th><button className="delete-event-button" onClick={() => { deleteMerchRequest(merchReq.id_request) }}>X</button></th>
                                         <th>{merchReq.first_name}</th>
                                         <th>{merchReq.last_name}</th>
                                         <th>{merchReq.tel_contact}</th>
@@ -186,7 +187,7 @@ export default function SystemMerch() {
                                                     <button type="button" className="merch-button" onClick={() => payPartialMerchRequest(merchReq.id_request)} > Registrar parcial </button>
                                                 </div>
                                                 <button type="button" className="merch-button" onClick={() => markPaidMerchRequest(merchReq.id_request)} > Saldar </button>
-                                                {/* <button className="delete-event-button" onClick={() => { deleteMerchRequest(merchReq.id_request) }}>Borrar</button> */}
+                                                
                                             </th>) : <th></th>}
                                     </tr>
                                 ))

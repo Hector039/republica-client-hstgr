@@ -812,6 +812,14 @@ select {
   gap: 10px;
 }
 
+.label_birthdate{
+  color: black;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
 
 @media (max-width: 768px) {
 

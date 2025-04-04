@@ -40,9 +40,8 @@ export default function SystemInscriptions() {
         axiosData();
     }, [])
 
-    /* 
         function deleteInscription(iid) {
-            axios.delete(urlInscriptions + iid, { withCredentials: true })
+            axios.delete(urlInscriptions + iid)
                 .then(response => {
                     toast.success('Se eliminó la inscripción correctamente.');
                     fetchInscriptions();
@@ -52,7 +51,7 @@ export default function SystemInscriptions() {
                     console.log(error)
                 })
         }
-     */
+
     function payPartialInscription(iid, inscriptionPrice) {
         const payDate = date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate())
         const amount = amounts[iid] || inscriptionPrice;
@@ -95,6 +94,7 @@ export default function SystemInscriptions() {
                     <table>
                         <thead>
                             <tr>
+                                <th>Borrar</th>
                                 <th>Nombre</th>
                                 <th>Apellido</th>
                                 <th>Teléfono de contacto</th>
@@ -112,6 +112,7 @@ export default function SystemInscriptions() {
                             {
                                 inscriptionsReq.map((inscription) => (
                                     <tr key={inscription.id_inscription}>
+                                        <th><button className="delete-event-button" onClick={() => { deleteInscription(inscription.id_inscription) }}>X</button></th>
                                         <th>{inscription.first_name}</th>
                                         <th>{inscription.last_name}</th>
                                         <th>{inscription.tel_contact}</th>
@@ -142,7 +143,7 @@ export default function SystemInscriptions() {
                                                     />
                                                     <button type="button" className="merch-button" onClick={() => payPartialInscription(inscription.id_inscription, inscription.inscription_price)} > Registrar </button>
                                                 </div>
-                                                {/* <button className="delete-event-button" onClick={() => { deleteInscription(inscription.id_inscription) }}>Borrar</button> */}
+                                            
                                             </th>
                                         ) : <th></th>}
                                     </tr>

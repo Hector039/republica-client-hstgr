@@ -1,5 +1,6 @@
 import axios from "../../config/axiosConfig";
 import { useForm } from "react-hook-form";
+import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { toast } from 'react-toastify';
 
@@ -132,6 +133,7 @@ export default function SystemPayments() {
                     <table>
                         <thead>
                             <tr>
+                                <th>Historial</th>
                                 <th>Nombre</th>
                                 <th>Apellido</th>
                                 <th>DNI</th>
@@ -148,10 +150,11 @@ export default function SystemPayments() {
                             {
                                 users.map((user) => (
                                     <tr key={user.id_user}>
+                                        <th><NavLink to={`/debtorpaymentshistory/${user.id_user}`} className="info-button">Ir</NavLink></th>
                                         <th>{user.first_name}</th>
                                         <th>{user.last_name}</th>
                                         <th>{user.dni}</th>
-                                        <th>{new Date(user.register_date).toLocaleDateString('en-GB')}</th>
+                                        <th>{new Date(user.register_date).toLocaleDateString('en-GB', {timeZone: 'UTC'})}</th>
                                         <th>{user.user_status ? "ACTIVO" : "INACTIVO"}</th>
                                         <th>{user.fee_descr}</th>
                                         <th><div className="unpaid_container">

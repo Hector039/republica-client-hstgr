@@ -60,7 +60,6 @@ export default function Daily() {
         axios.get(urlDailyAnnualInfo + day)
             .then(response => {
                 setAnnualInfo(response.data);
-                updateTotal(response.data)
             })
             .catch(error => {
                 console.log(error);
@@ -129,7 +128,7 @@ export default function Daily() {
                 <table className="table_balance">
                     <thead>
                         <tr>
-                            <th>Total cuotas y matrículas</th>
+                            <th>Total cuotas</th>
                             <th>Egresos</th>
                             <th>Balance del día</th>
                         </tr>
@@ -165,63 +164,23 @@ export default function Daily() {
                     </table>
             }
             <section className="cuenta-info">
-                {/* <h2>Cuota:</h2>
-                {monthlyInfo.length === 0 ? <p className="info-text-register">Sin datos</p> :
 
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Total</th>
-                                <th>Balance</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            {
-                                monthlyInfo.map((reg) => (
-                                    <tr key={reg.registros}>
-                                        <th>{reg.total}</th>
-                                        <th></th>
-                                    </tr>
-                                ))
-                            }
-
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th></th>
-                                <th>${(monthlyInfo.reduce((acumulador, item) => acumulador + parseInt(item.total), 0))}</th>
-                            </tr>
-                        </tfoot>
-                    </table>} */}
                 <h2>Matrícula anual:</h2>
                 {annualInfo.length === 0 ? <p className="info-text-register">Sin datos</p> :
 
                     <table>
                         <thead>
                             <tr>
+                                <th>Registros</th>
                                 <th>Total</th>
-                                <th>Balance</th>
                             </tr>
                         </thead>
                         <tbody>
-
-                            {
-                                annualInfo.map((reg) => (
-                                    <tr key={reg.registros}>
-                                        <th>{reg.total}</th>
-                                        <th></th>
-                                    </tr>
-                                ))
-                            }
-
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th></th>
-                                <th>${(annualInfo.reduce((acumulador, item) => acumulador + parseInt(item.total), 0))}</th>
+                            <tr >
+                                <th>{annualInfo[0].cantidad}</th>
+                                <th>{annualInfo[0].total}</th>
                             </tr>
-                        </tfoot>
+                        </tbody>
                     </table>}
                 <h2>Inscripciones a eventos:</h2>
                 {inscriptionInfo.length === 0 ? <p className="info-text-register">Sin datos</p> :

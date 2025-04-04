@@ -6,6 +6,7 @@ import { downloadExcel } from "react-export-table-to-excel";
 import { toast } from 'react-toastify';
 
 const urlUsers = "users/usersclean"
+const urlDelUser = "users/deluser/"
 const urlChangeStatus = "users/changeuserstatus"
 const urlChangeGroup = "users/changeusergroup"
 const urlChangeFee = "users/changeuserfee"
@@ -99,7 +100,17 @@ export default function SystemUsers() {
             })
     }
 
-
+    function deleteUser(uid) {
+        axios.delete(urlDelUser + uid)
+            .then(response => {
+                toast.success('Se eliminó el usuario correctamente.');
+                setUsers(prevUsers => prevUsers.filter(user => user.id_user !== uid));
+            })
+            .catch(error => {
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+                console.log(error)
+            })
+    }
 
     function handleDownloadExcel() {
         const header = ["ID usuario", "Nombre", "Apellido", "DNI", "Fecha Ingreso", "Nacimiento", "Estatus", "Telefono", "Grupo", "ID tarifa", "Tarifa"];
@@ -141,6 +152,7 @@ export default function SystemUsers() {
                         <table >
                             <thead>
                                 <tr>
+                                    <th>Eliminar</th>
                                     <th>Nombre</th>
                                     <th>Apellido</th>
                                     <th>Nacimiento</th>
@@ -157,12 +169,13 @@ export default function SystemUsers() {
                                 {
                                     users.map((user) => (
                                         <tr key={user.id_user}>
+                                            <th><button className="delete-event-button" onClick={() => { deleteUser(user.id_user) }}>X</button></th>
                                             <th>{user.first_name}</th>
                                             <th>{user.last_name}</th>
-                                            <th>{new Date(user.birth_date).toLocaleDateString('en-GB')}</th>
+                                            <th>{user.birth_date}</th>
                                             <th>{user.dni}</th>
                                             <th>{user.tel_contact}</th>
-                                            <th>{new Date(user.register_date).toLocaleDateString('en-GB')}</th>
+                                            <th>{new Date(user.register_date).toLocaleDateString('en-GB', {timeZone: 'UTC'})}</th>
                                             <th><select {...register2(`status_${user.id_user}`)} value={user.user_status}
                                                 onChange={e => { changeUserStatus(e.target.value, user.id_user) }} >
                                                 <option value="1">Activo</option>
@@ -189,6 +202,7 @@ export default function SystemUsers() {
                                                 <option value="gimnasia 5">gimnasia 5</option>
                                                 <option value="entrenamiento 1">entrenamiento 1</option>
                                                 <option value="entrenamiento 2">entrenamiento 2</option>
+                                                <option value="mañana">mañana</option>
                                             </select></th>
                                         </tr>
                                     ))

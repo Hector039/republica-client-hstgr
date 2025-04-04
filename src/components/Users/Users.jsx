@@ -149,8 +149,6 @@ export default function Users() {
     }
 
     const newRegister = (e) => {
-        const telContact = `54${e.tel_pre}15${e.tel_contact}`
-
         if (e.password !== e.repassword) return toast.error('Los passwords no coinciden. Intenta de nuevo');
         axios.post(urlUserRegister, {
             first_name: e.first_name,
@@ -159,7 +157,7 @@ export default function Users() {
             birth_date: e.birth_date,
             password: e.password,
             dni: e.dni,
-            tel_contact: telContact
+            tel_contact: e.tel_contact
         })
             .then(response => {
                 Swal.fire({
@@ -219,20 +217,16 @@ export default function Users() {
                                 <p className="info-text-register">Recuerda que tu contraseña debe tener 8 carácteres alfanuméricos SIN símbolos.</p>
                                 <input type="password" id="password" name="password" placeholder="Contraseña nueva *" maxLength="8" pattern="[A-Za-z0-9]{8,8}" {...register2("password", { required: true })} />
                                 <input type="password" id="repassword" name="repassword" placeholder="Repite la contraseña nueva *" maxLength="8" pattern="[A-Za-z0-9]{8,8}" {...register2("repassword", { required: true })} />
-                                <input type="date" id="birth_date" name="birth_date" placeholder="Fecha nacimiento *" {...register2("birth_date", { required: true })} />
+                                <label className="label_birthdate">Fecha de nacimiento:
+                                <p className="info-text-register">Ejemplo: 12/03/2024 o 2024/03/12</p>
+                                    <input type="text" id="birth_date" name="birth_date" pattern="^(?:\d{2}/\d{2}/\d{4}|\d{4}/\d{2}/\d{2})$" 
+                                    title="Formato válido: DD/MM/AAAA o AAAA/MM/DD (Ej: 12/03/2024 o 2024/03/12)." placeholder="dd/mm/aaaa *" {...register2("birth_date", { required: true })} />
+                                </label>
                                 <input id="dni" name="dni" placeholder="DNI *" type="text" inputMode="numeric" pattern="\d*" maxLength="8" minLength="8" title="Solo números. 8 dígitos." {...register2("dni", { required: true })} />
-                                <p className="info-text-register">Teléfono ejemplo: 123 1234567</p>
-                                <div className="telephone-container">
-                                    <div className="tel-pre">
-                                        <p className="info-text-register">0 -</p>
-                                        <input type="text" className="tel-prefix" id="tel_pre" name="tel_pre" placeholder="Prefijo *" inputMode="numeric" pattern="\d*" maxLength="5" minLength="3" title="Solo números. min 3 max 5 dígitos." {...register2("tel_pre", { required: true })} />
-                                    </div>
-                                    <div className="telephone">
-                                        <p className="info-text-register">15 -</p>
-                                        <input type="text" className="tel_contact" id="tel_contact" name="tel_contact" placeholder="Teléfono *" inputMode="numeric" pattern="\d*" maxLength="7" minLength="7" title="Solo números. 7 dígitos." {...register2("tel_contact", { required: true })} />
-                                    </div>
-                                </div>
-
+                                <label className="label_birthdate">Teléfono:
+                                    <p className="info-text-register">Ejemplo: 3425123456</p>
+                                    <input type="text" id="tel_contact" name="tel_contact" placeholder="Teléfono *" inputMode="numeric" pattern="\d*" title="Solo números." {...register2("tel_contact", { required: true })} />
+                                </label>
                                 <button type="submit" className="cuenta-button" >Registrarse</button>
                             </form>
                         </div>
@@ -243,10 +237,10 @@ export default function Users() {
                         <div className="user-info">
                             <p>Nombre completo: {user.first_name} {user.last_name}</p>
                             <p>E-Mail: {user.email ? user.email : "Sin dato"}</p>
-                            <p>Fecha de nacimiento: {new Date(user.birth_date).toLocaleDateString('en-GB')}</p>
+                            <p>Fecha de nacimiento: {user.birth_date}</p>
                             <p>DNI: {user.dni}</p>
                             <p>Teléfono de contacto: {user.tel_contact}</p>
-                            <p>Fecha de registro: {new Date(user.register_date).toLocaleDateString('en-GB')}</p>
+                            <p>Fecha de registro: {new Date(user.register_date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</p>
                         </div>
                         <div className="user-info-buttons">
                             <NavLink to={`/updateuser`} className="cuenta-button" style={({ isActive }) => { return { fontWeight: isActive ? "bold" : "" } }}>Mi cuenta</NavLink>

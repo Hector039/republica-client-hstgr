@@ -34,15 +34,12 @@ export default function UpdateUser() {
             axios.get(urlUser)
                 .then(response => {
                     setUser(response.data);
-                    const preFix = response.data.tel_contact.slice(2, -9)
-                    const telContact = response.data.tel_contact.slice(-7)
                     setValue("first_name", response.data.first_name);
                     setValue("last_name", response.data.last_name);
                     setValue("email", response.data.email);
-                    setValue("birth_date", response.data.birth_date.slice(0, -14));
+                    setValue("birth_date", response.data.birth_date);
                     setValue("dni", response.data.dni);
-                    setValue("tel_pre", preFix);
-                    setValue("tel_contact", telContact);
+                    setValue("tel_contact", response.data.tel_contact);
                 })
                 .catch(error => {
                     console.log(error);
@@ -54,14 +51,13 @@ export default function UpdateUser() {
     }, [])
 
     const updateUser = (e) => {
-        const telContact = `54${e.tel_pre}15${e.tel_contact}`
         axios.put(urlUpdateUser, {
             first_name: e.first_name,
             last_name: e.last_name,
             email: e.email,
             birth_date: e.birth_date,
             dni: e.dni,
-            tel_contact: telContact
+            tel_contact: e.tel_contact
         })
             .then(response => {
                 Swal.fire({
@@ -106,19 +102,15 @@ export default function UpdateUser() {
                 <input type="text" name="first_name" maxLength="30" pattern="^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]{3,30}$" title="No uses símbolos ni números. Min 3, Max 30 carácteres." {...register("first_name", { required: true })} />
                 <input type="text" name="last_name" maxLength="30" pattern="^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]{3,30}$" title="No uses símbolos ni números. Min 3, Max 30 carácteres." {...register("last_name", { required: true })} />
                 <input type="email" name="email" placeholder="Email " {...register("email")} />
-                <input type="date" name="birth_date" {...register("birth_date", { required: true })} />
-                <p className="info-text-register">Teléfono ejemplo: 123 1234567</p>
-                <div className="telephone-container">
-                    <div className="tel-pre">
-                        <p className="info-text-register">0-</p>
-                        <input type="text" className="tel-prefix" id="tel_pre" name="tel_pre" placeholder="Prefijo *" inputMode="numeric" pattern="\d*" maxLength="5" minLength="3" title="Solo números. min 3 max 5 dígitos." {...register("tel_pre", { required: true })} />
-                    </div>
-                    <div className="telephone">
-                        <p className="info-text-register">15-</p>
-                        <input type="text" id="tel_contact" name="tel_contact" placeholder="Teléfono *" inputMode="numeric" pattern="\d*" maxLength="7" minLength="7" title="Solo números. 7 dígitos." {...register("tel_contact", { required: true })} />
-                    </div>
-                </div>
-
+                <label className="label_birthdate">Fecha de nacimiento:
+                    <p className="info-text-register">Ejemplo: 12/03/2024 o 2024/03/12</p>
+                    <input type="text" id="birth_date" name="birth_date" pattern="^(?:\d{2}/\d{2}/\d{4}|\d{4}/\d{2}/\d{2})$"
+                        title="Formato válido: DD/MM/AAAA o AAAA/MM/DD (Ej: 12/03/2024 o 2024/03/12)." placeholder="dd/mm/aaaa *" {...register("birth_date", { required: true })} />
+                </label>
+                <label className="label_birthdate">Teléfono:
+                    <p className="info-text-register">Ejemplo: 3425123456</p>
+                    <input type="text" id="tel_contact" name="tel_contact" placeholder="Teléfono *" inputMode="numeric" pattern="\d*" title="Solo números." {...register("tel_contact", { required: true })} />
+                </label>
                 <div className="sistema-bajas-modif-botones">
                     <button type="submit" className="boton-quitar-carrito">Actualizar datos</button>
                 </div>
@@ -126,8 +118,8 @@ export default function UpdateUser() {
             </form>
 
             <form onSubmit={handleSubmit2(updateUserPassword)} className="checkout-form">
-                <input type="password" name="password" placeholder="Ingresa un nuevo password"  maxLength="8" pattern="[A-Za-z0-9]{8,8}" {...register2("password", { required: true })} />
-                <input type="password" name="repassword" placeholder="Repite el nuevo password"  maxLength="8" pattern="[A-Za-z0-9]{8,8}" {...register2("repassword", { required: true })} />
+                <input type="password" name="password" placeholder="Ingresa un nuevo password" maxLength="8" pattern="[A-Za-z0-9]{8,8}" {...register2("password", { required: true })} />
+                <input type="password" name="repassword" placeholder="Repite el nuevo password" maxLength="8" pattern="[A-Za-z0-9]{8,8}" {...register2("repassword", { required: true })} />
 
                 <div className="sistema-bajas-modif-botones">
                     <button type="submit" className="boton-quitar-carrito">Actualizar password</button>
