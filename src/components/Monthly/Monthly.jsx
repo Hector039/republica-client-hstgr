@@ -27,7 +27,7 @@ export default function Monthly() {
     const [inscriptionInfo, setInscriptionInfo] = useState([])
     const [requestsInfo, setRequestsInfo] = useState([])
     const [expendituresInfo, setExpendituresInfo] = useState([])
-    
+
     const [info, setInfo] = useState([])
 
     const {
@@ -75,7 +75,7 @@ export default function Monthly() {
         axios.get(urlMonthlyAnnualInfo + month)
             .then(response => {
                 setAnnualInfo(response.data);
-                updateTotal(response.data)
+                //updateTotal(response.data)
             })
             .catch(error => {
                 console.log(error);
@@ -149,7 +149,7 @@ export default function Monthly() {
                 <table className="table_balance">
                     <thead>
                         <tr>
-                            <th>Total cuotas y Matrículas</th>
+                            <th>Total cuotas</th>
                             <th>Egresos</th>
                             <th>Balance del Mes</th>
                         </tr>
@@ -185,69 +185,23 @@ export default function Monthly() {
                     </table>
             }
             <section className="cuenta-info">
-                {/* <h2>Cuota:</h2>
-                {monthlyInfo.length === 0 ? <p className="info-text-register">Sin datos</p> :
 
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Total</th>
-                                <th>Balance</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            {
-                                monthlyInfo.map((reg) => (
-                                    <tr key={reg.registros}>
-                                        <th>{new Date(reg.pay_date).toLocaleDateString('en-GB')}</th>
-                                        <th>{reg.total}</th>
-                                        <th></th>
-                                    </tr>
-                                ))
-                            }
-
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                                <th>${(monthlyInfo.reduce((acumulador, item) => acumulador + parseInt(item.total), 0))}</th>
-                            </tr>
-                        </tfoot>
-                    </table>} */}
                 <h2>Matrícula anual:</h2>
                 {annualInfo.length === 0 ? <p className="info-text-register">Sin datos</p> :
 
                     <table>
                         <thead>
                             <tr>
-                                <th>Fecha</th>
+                                <th>Registros</th>
                                 <th>Total</th>
-                                <th>Balance</th>
                             </tr>
                         </thead>
                         <tbody>
-
-                            {
-                                annualInfo.map((reg) => (
-                                    <tr key={reg.registros}>
-                                        <th>{new Date(reg.pay_date).toLocaleDateString('en-GB')}</th>
-                                        <th>{reg.total}</th>
-                                        <th></th>
-                                    </tr>
-                                ))
-                            }
-
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                                <th>${(annualInfo.reduce((acumulador, item) => acumulador + parseInt(item.total), 0))}</th>
+                            <tr >
+                                <th>{annualInfo[0].cantidad}</th>
+                                <th>{annualInfo[0].total}</th>
                             </tr>
-                        </tfoot>
+                        </tbody>
                     </table>}
                 <h2>Inscripciones a eventos:</h2>
                 {inscriptionInfo.length === 0 ? <p className="info-text-register">Sin datos</p> :
@@ -345,8 +299,8 @@ export default function Monthly() {
                             </tr>
                         </tfoot>
                     </table>}
-                    <h2>Grilla por días:</h2>
-                    {info.length === 0 ? <p className="info-text-register">Sin datos</p> :
+                <h2>Grilla por días:</h2>
+                {info.length === 0 ? <p className="info-text-register">Sin datos</p> :
                     <table>
                         <thead>
                             <tr>
