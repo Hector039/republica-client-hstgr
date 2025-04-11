@@ -1,7 +1,7 @@
 import axios from "../../config/axiosConfig";
 import { useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from 'react-toastify';
 
 const date = new Date();
@@ -29,6 +29,8 @@ export default function SystemPayments() {
     });
 
     function getUsers(e) {
+        sessionStorage.setItem("value", e.value);
+        sessionStorage.setItem("search", e.search);
         axios.post(urlUsers, { search: e.search, value: e.value })
             .then(response => {
                 setUsers(response.data);
@@ -77,7 +79,7 @@ export default function SystemPayments() {
                 toast.error("Por favor, ingresa un monto.");
                 return;
             }
-            
+
             axios.post(urlAddAnnualPayment, { uid: uid, year: dateArray[0], payDate: payDate, amount: amount })
                 .then(response => {
                     if (response.data !== "") return toast.success(response.data);
@@ -106,6 +108,13 @@ export default function SystemPayments() {
             [uid]: event.target.value
         }));
     }
+
+    useEffect(() => {
+        if (sessionStorage.getItem("search")) {
+            const valuesFromStorage = { search: sessionStorage.getItem("search"), value: sessionStorage.getItem("value") }
+            getUsers(valuesFromStorage)
+        }
+    }, []);
 
     return (
         <div className="carrito">
@@ -154,7 +163,7 @@ export default function SystemPayments() {
                                         <th>{user.first_name}</th>
                                         <th>{user.last_name}</th>
                                         <th>{user.dni}</th>
-                                        <th>{new Date(user.register_date).toLocaleDateString('en-GB', {timeZone: 'UTC'})}</th>
+                                        <th>{new Date(user.register_date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</th>
                                         <th>{user.user_status ? "ACTIVO" : "INACTIVO"}</th>
                                         <th>{user.fee_descr}</th>
                                         <th><div className="unpaid_container">
@@ -162,8 +171,8 @@ export default function SystemPayments() {
                                             <p>{user.last_unpaid_year ? user.last_unpaid_year : "---"}</p>
                                         </div></th>
                                         <th><div className="unpaid_container">
-                                            <p>{user.last_unpaid_month_amount ? "$"+user.last_unpaid_month_amount : "---"}</p>
-                                            <p>{user.last_unpaid_amount ? "$"+user.last_unpaid_amount : "---"}</p>
+                                            <p>{user.last_unpaid_month_amount ? "$" + user.last_unpaid_month_amount : "---"}</p>
+                                            <p>{user.last_unpaid_amount ? "$" + user.last_unpaid_amount : "---"}</p>
                                         </div></th>
                                         <th><form onSubmit={e => handleSubmit2(e, user.id_user, user.fee_month, user.fee_annual)} >
 

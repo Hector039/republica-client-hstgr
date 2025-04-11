@@ -4,6 +4,7 @@ import axios from "../../config/axiosConfig";
 import { NavLink } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { downloadExcel } from "react-export-table-to-excel";
+import { useForm } from "react-hook-form";
 
 const date = new Date();
 
@@ -19,6 +20,13 @@ export default function SystemMerch() {
     const [amounts, setAmounts] = useState({});
     const [featurePosition, setFeaturePosition] = useState(0);
 
+    const {
+        register,
+        handleSubmit,
+    } = useForm({
+        mode: "onBlur",
+    });
+
     function openCloseFeatures(fid, position) {
         const pos = position ? 0 : 1;
         axios.put(urlUpdateFeaturesPositions + fid + "/" + pos)
@@ -31,7 +39,7 @@ export default function SystemMerch() {
             })
     }
 
-    function fetchMerch() {
+    /* function fetchMerch() {
         axios.get(urlMerchRequests)
             .then(response => {
                 setMerchReq(response.data);
@@ -39,6 +47,19 @@ export default function SystemMerch() {
             .catch(error => {
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
+            })
+    } */
+
+    function getMerchUsers(e) {
+        sessionStorage.setItem("value", e.value);
+        sessionStorage.setItem("search", e.search);
+        axios.post(urlMerchRequests, { search: e.search, value: e.value })
+            .then(response => {
+                setMerchReq(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
             })
     }
 
@@ -54,7 +75,7 @@ export default function SystemMerch() {
     }
 
     useEffect(() => {
-        fetchMerch();
+        //fetchMerch();
         fetchPositions();
     }, []);
 
@@ -81,7 +102,7 @@ export default function SystemMerch() {
                 console.log(error)
             })
     }
-    
+
     function payPartialMerchRequest(mid) {
         const payDate = date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate())
         const amount = amounts[mid] || "";
@@ -94,7 +115,10 @@ export default function SystemMerch() {
         axios.post(urlPartialPayMerchRequest, { mid: mid, payDate: payDate, amount: amount })
             .then(response => {
                 toast.success('Se registró el pago parcial.');
-                fetchMerch();
+                if (sessionStorage.getItem("search")){
+                    const valuesFromStorage = { search: sessionStorage.getItem("search"), value: sessionStorage.getItem("value") }
+                    getMerchUsers(valuesFromStorage);
+                }
                 setAmounts(prev => ({ ...prev, [mid]: "" }));
             })
             .catch(error => {
@@ -108,7 +132,10 @@ export default function SystemMerch() {
         axios.put(urlMarkPaidMerchRequests, { mid: mid, payDate: payDate })
             .then(response => {
                 toast.success('Se saldó la solicitud.');
-                fetchMerch();
+                if (sessionStorage.getItem("search")){
+                    const valuesFromStorage = { search: sessionStorage.getItem("search"), value: sessionStorage.getItem("value") }
+                    getMerchUsers(valuesFromStorage);
+                }
             })
             .catch(error => {
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
@@ -134,7 +161,25 @@ export default function SystemMerch() {
                 <button className="is_closed" onClick={() => { openCloseFeatures(1, featurePosition) }}>Solicitudes deshabilitadas</button>}
 
             <h1>Historial de solicitudes de encargues:</h1>
-            {merchRequests.length != 0 ?
+
+            <form onSubmit={handleSubmit(getMerchUsers)} className="checkout-form">
+                <label>Buscar usuario por:
+                    <select {...register("search")}>
+                        <option value="last_name" defaultChecked>Apellido</option>
+                        <option value="first_name">Nombre</option>
+                        <option value="dni">DNI</option>
+                        <option value="user_group">Grupo</option>
+                        <option value="user_status">Estado (0 o 1)</option>
+                        <option value="TODO">Todo</option>
+                    </select>
+                </label>
+                <label>Comienza con:
+                    <input type="text" name="value" placeholder="Ingresa tu búsqueda..." {...register("value")} />
+                </label>
+                <button type="submit" className="cuenta-button">Buscar</button>
+            </form>
+
+            {merchRequests.length != 0 &&
                 <div className="table_container">
                     <button className="boton-quitar-carrito" onClick={handleDownloadExcel}>Exportar</button>
 
@@ -187,13 +232,13 @@ export default function SystemMerch() {
                                                     <button type="button" className="merch-button" onClick={() => payPartialMerchRequest(merchReq.id_request)} > Registrar parcial </button>
                                                 </div>
                                                 <button type="button" className="merch-button" onClick={() => markPaidMerchRequest(merchReq.id_request)} > Saldar </button>
-                                                
+
                                             </th>) : <th></th>}
                                     </tr>
                                 ))
                             }
                         </tbody>
-                    </table></div> : <p>No se encontraron solicitudes.</p>}
+                    </table></div>}
 
             <NavLink to={"/"} className="info-button" >Volver</NavLink>
         </div>
