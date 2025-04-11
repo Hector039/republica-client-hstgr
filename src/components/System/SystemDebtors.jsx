@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import axios from "../../config/axiosConfig";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from 'react-toastify';
 
 const urlGetDebtors = "monthlypayments/"
@@ -31,6 +31,11 @@ export default function SystemDebtors() {
     });
 
     function getDebtorsUsers(e) {
+
+        sessionStorage.setItem("selector", e.selector);
+        sessionStorage.setItem("day", e.day);
+        sessionStorage.setItem("group", e.group);
+
         if (e.selector === "monthly_payments") {
             axios.get(urlGetDebtors + e.day.slice(6) + "/" + e.day.slice(0, -6) + "/" + e.group)
                 .then(response => {
@@ -70,6 +75,15 @@ export default function SystemDebtors() {
         }
 
     }
+
+    useEffect(() => {
+        if (sessionStorage.getItem("selector")) {
+            const valuesFromStorage = { selector: sessionStorage.getItem("selector"), 
+                                        day: sessionStorage.getItem("day"), 
+                                        group: sessionStorage.getItem("group") }
+            getDebtorsUsers(valuesFromStorage)
+        }
+    }, []);
 
     function changeUserStatus(e, uid) {
         const newStatus = parseInt(e);

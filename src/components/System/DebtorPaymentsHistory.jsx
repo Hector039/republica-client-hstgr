@@ -62,8 +62,8 @@ export default function DebtorPaymentsHistory() {
             })
     }
 
-    function deleteMonthlyPayment(mid) {
-        axios.delete(urlDelMonthlyPayment + mid)
+    function deleteMonthlyPayment(mid, payDate) {
+        axios.delete(urlDelMonthlyPayment + mid + "/" + payDate)
             .then(response => {
                 fetchMonthlyHistory(uid);
             })
@@ -113,7 +113,7 @@ export default function DebtorPaymentsHistory() {
                             {
                                 monthlyPaymentsHistory.map((payment) => (
                                     <tr key={payment.id_payment}>
-                                        <th><button className="delete-event-button" onClick={() => { deleteMonthlyPayment(payment.id_payment) }}>X</button></th>
+                                        <th><button className="delete-event-button" onClick={() => { deleteMonthlyPayment(payment.id_payment, payment.pay_date) }}>X</button></th>
                                         <th>{new Date(payment.pay_date).toLocaleDateString('en-GB', {timeZone: 'UTC'})}</th>
                                         <th>{meses[payment.month_paid]}</th>
                                         <th>{payment.year_paid}</th>
@@ -201,7 +201,8 @@ export default function DebtorPaymentsHistory() {
 
                     </table>}
             </section>
-            <NavLink to={`/administrationpayments`} className="info-button">Volver</NavLink>
+            <NavLink to={`/administrationpayments`} className="info-button">Volver a pagos</NavLink>
+            <NavLink to={`/administrationdebtors`} className="info-button">Volver a deudores</NavLink>
         </div>
     )
 }
