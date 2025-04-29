@@ -170,6 +170,7 @@ export default function SystemMerch() {
                         <option value="dni">DNI</option>
                         <option value="user_group">Grupo</option>
                         <option value="user_status">Estado (0 o 1)</option>
+                        <option value="req_description">Descripción</option>
                         <option value="TODO">Todo</option>
                     </select>
                 </label>

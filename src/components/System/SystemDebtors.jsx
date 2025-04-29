@@ -35,9 +35,9 @@ export default function SystemDebtors() {
         sessionStorage.setItem("selector", e.selector);
         sessionStorage.setItem("day", e.day);
         sessionStorage.setItem("group", e.group);
-
+        
         if (e.selector === "monthly_payments") {
-            axios.get(urlGetDebtors + e.day.slice(6) + "/" + e.day.slice(0, -6) + "/" + e.group)
+            axios.get(urlGetDebtors + e.day.slice(5, -3) + "/" + e.day.slice(0, -6) + "/" + e.group)
                 .then(response => {
                     setDebtorsUsers(response.data);
                 })
