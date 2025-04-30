@@ -4,6 +4,7 @@ import axios from "../../config/axiosConfig";
 import { NavLink } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { downloadExcel } from "react-export-table-to-excel";
+import { useForm } from "react-hook-form";
 
 const date = new Date();
 
@@ -15,20 +16,41 @@ export default function SystemInscriptions() {
     const [inscriptionsReq, setinscriptionsReq] = useState([]);
     const [amounts, setAmounts] = useState({});
 
-    function fetchInscriptions() {
-        axios.get(urlInscriptions)
+    const {
+        register,
+        handleSubmit,
+    } = useForm({
+        mode: "onBlur",
+    });
+
+    function getInscriptionsUsers(e) {
+        sessionStorage.setItem("value", e.value);
+        sessionStorage.setItem("search", e.search);
+        axios.post(urlInscriptions, { search: e.search, value: e.value })
             .then(response => {
                 setinscriptionsReq(response.data);
             })
             .catch(error => {
-                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error);
-            });
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+            })
     }
 
-    useEffect(() => {
-        fetchInscriptions();
-    }, []);
+    /*  function fetchInscriptions() {
+         axios.get(urlInscriptions)
+             .then(response => {
+                 setinscriptionsReq(response.data);
+             })
+             .catch(error => {
+                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+                 console.log(error);
+             });
+     } */
+    /* 
+        useEffect(() => {
+            fetchInscriptions();
+        }, []);
+     */
 
     useEffect(() => {
         function axiosData() {
@@ -40,17 +62,21 @@ export default function SystemInscriptions() {
         axiosData();
     }, [])
 
-        function deleteInscription(iid) {
-            axios.delete(urlInscriptions + iid)
-                .then(response => {
-                    toast.success('Se eliminó la inscripción correctamente.');
-                    fetchInscriptions();
-                })
-                .catch(error => {
-                    toast.error('Ocurrió un error inesperado. Intenta de nuevo');
-                    console.log(error)
-                })
-        }
+    function deleteInscription(iid) {
+        axios.delete(urlInscriptions + iid)
+            .then(response => {
+                toast.success('Se eliminó la inscripción correctamente.');
+                //fetchInscriptions();
+                if (sessionStorage.getItem("search")) {
+                    const valuesFromStorage = { search: sessionStorage.getItem("search"), value: sessionStorage.getItem("value") }
+                    getInscriptionsUsers(valuesFromStorage);
+                }
+            })
+            .catch(error => {
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+                console.log(error)
+            })
+    }
 
     function payPartialInscription(iid, inscriptionPrice) {
         const payDate = date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate())
@@ -64,7 +90,11 @@ export default function SystemInscriptions() {
         axios.post(urlPartialPayInscription, { iid: iid, payDate: payDate, amount: amount })
             .then(response => {
                 toast.success('Se registró el pago.');
-                fetchInscriptions();
+                //fetchInscriptions();
+                if (sessionStorage.getItem("search")) {
+                    const valuesFromStorage = { search: sessionStorage.getItem("search"), value: sessionStorage.getItem("value") }
+                    getInscriptionsUsers(valuesFromStorage);
+                }
                 setAmounts(prev => ({ ...prev, [iid]: "" }));
             })
             .catch(error => {
@@ -88,6 +118,25 @@ export default function SystemInscriptions() {
     return (
         <div className="system_incs_container">
             <h1>Gestión solicitudes de inscripción:</h1>
+
+            <form onSubmit={handleSubmit(getInscriptionsUsers)} className="checkout-form">
+                <label>Buscar usuario por:
+                    <select {...register("search")}>
+                        <option value="last_name" defaultChecked>Apellido</option>
+                        <option value="first_name">Nombre</option>
+                        <option value="dni">DNI</option>
+                        <option value="user_group">Grupo</option>
+                        <option value="user_status">Estado (0 o 1)</option>
+                        <option value="event_name">Nombre evento</option>
+                        <option value="TODO">Todo</option>
+                    </select>
+                </label>
+                <label>Comienza con:
+                    <input type="text" name="value" placeholder="Ingresa tu búsqueda..." {...register("value")} />
+                </label>
+                <button type="submit" className="cuenta-button">Buscar</button>
+            </form>
+
             {inscriptionsReq.length != 0 ?
                 <div className="table_container">
                     <button className="boton-quitar-carrito" onClick={handleDownloadExcel}>Exportar</button>
@@ -97,7 +146,7 @@ export default function SystemInscriptions() {
                                 <th>Borrar</th>
                                 <th>Nombre</th>
                                 <th>Apellido</th>
-                                <th>Teléfono de contacto</th>
+                                <th>Teléfono</th>
                                 <th>Nombre evento</th>
                                 <th>Fecha evento</th>
                                 <th>Precio inscripción</th>
@@ -143,7 +192,7 @@ export default function SystemInscriptions() {
                                                     />
                                                     <button type="button" className="merch-button" onClick={() => payPartialInscription(inscription.id_inscription, inscription.inscription_price)} > Registrar </button>
                                                 </div>
-                                            
+
                                             </th>
                                         ) : <th></th>}
                                     </tr>

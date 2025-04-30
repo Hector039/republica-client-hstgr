@@ -236,7 +236,7 @@ export default function MasInfo() {
                     <table>
                         <thead>
                             <tr>
-                                <th>Fecha de publicación</th>
+                               {/*  <th>Fecha de publicación</th> */}
                                 <th>Fecha del evento</th>
                                 <th>Nombre</th>
                                 <th>Descripción</th>
@@ -249,7 +249,7 @@ export default function MasInfo() {
                             {
                                 userInscriptions.map((event) => (
                                     <tr key={event.id_inscription}>
-                                        <th>{new Date(event.publication_date).toLocaleDateString('en-GB')}</th>
+                                        {/* <th>{new Date(event.publication_date).toLocaleDateString('en-GB')}</th> */}
                                         <th>{new Date(event.event_date).toLocaleDateString('en-GB')}</th>
                                         <th>{event.event_name}</th>
                                         <th>{event.event_description}</th>
