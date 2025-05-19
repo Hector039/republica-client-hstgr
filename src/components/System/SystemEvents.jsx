@@ -58,25 +58,29 @@ export default function SystemEvents() {
         fetchEvents();
         fetchPositions();
     }, []);
-/* 
-    function deleteEvent(eid) {
-        axios.delete(urlEvents + eid, { withCredentials: true })
-            .then(response => {
-                toast.success('Se eliminó el evento correctamente.');
-                fetchEvents();
-            })
-            .catch(error => {
-                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
-                console.log(error)
-            })
-    }
- */
+    /* 
+        function deleteEvent(eid) {
+            axios.delete(urlEvents + eid, { withCredentials: true })
+                .then(response => {
+                    toast.success('Se eliminó el evento correctamente.');
+                    fetchEvents();
+                })
+                .catch(error => {
+                    toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+                    console.log(error)
+                })
+        }
+     */
     const newEvent = (e) => {
+        const groupArray = [e.peques_1, e.peques_2, e.gimnasia_1, e.gimnasia_2, e.gimnasia_3, e.gimnasia_4, e.gimnasia_5, e.entrenamiento_1, e.entrenamiento_2, e.maniana]
+        const groupsCleaned = groupArray.filter(group => group !== false)
+
         axios.post(urlEvents, {
             event_date: e.event_date,
             event_name: e.event_name,
             event_description: e.event_description,
-            inscription_price: e.inscription_price
+            inscription_price: e.inscription_price,
+            group_list: groupsCleaned
         })
             .then(response => {
                 toast.success('Se creó el evento correctamente.');
@@ -103,6 +107,49 @@ export default function SystemEvents() {
                     <input type="text" name="event_name" placeholder="Nombre del evento *" {...register("event_name", { required: true })} />
                     <input type="text" name="event_description" placeholder="Descripción *" {...register("event_description", { required: true })} />
                     <input type="number" name="inscription_price" placeholder="Precio de inscripción *" min={"0"} defaultValue={"0"} {...register("inscription_price")} />
+                    
+                    <div className="group_list_container">
+                        <div className="group_list">
+                            <input type="checkbox" id="peques1" name="peques 1" value="peques 1"  {...register("peques_1")} />
+                            <label htmlFor="peques1">peques 1</label>
+                        </div>
+                        <div className="group_list">
+                            <input type="checkbox" id="peques2" name="peques 2" value="peques 2"  {...register("peques_2")} />
+                            <label htmlFor="peques2">peques 2</label>
+                        </div>
+                        <div className="group_list">
+                            <input type="checkbox" id="gimnasia1" name="gimnasia 1" value="gimnasia 1"  {...register("gimnasia_1")} />
+                            <label htmlFor="gimnasia1">gimnasia 1</label>
+                        </div>
+                        <div className="group_list">
+                            <input type="checkbox" id="gimnasia2" name="gimnasia 2" value="gimnasia 2"  {...register("gimnasia_2")} />
+                            <label htmlFor="gimnasia2">gimnasia 2</label>
+                        </div>
+                        <div className="group_list">
+                            <input type="checkbox" id="gimnasia3" name="gimnasia 3" value="gimnasia 3"  {...register("gimnasia_3")} />
+                            <label htmlFor="gimnasia3">gimnasia 3</label>
+                        </div>
+                        <div className="group_list">
+                            <input type="checkbox" id="gimnasia4" name="gimnasia 4" value="gimnasia 4"  {...register("gimnasia_4")} />
+                            <label htmlFor="gimnasia4">gimnasia 4</label>
+                        </div>
+                        <div className="group_list">
+                            <input type="checkbox" id="gimnasia5" name="gimnasia 5" value="gimnasia 5"  {...register("gimnasia_5")} />
+                            <label htmlFor="gimnasia5">gimnasia 5</label>
+                        </div>
+                        <div className="group_list">
+                            <input type="checkbox" id="entrenamiento1" name="entrenamiento 1" value="entrenamiento 1"  {...register("entrenamiento_1")} />
+                            <label htmlFor="entrenamiento1">entrenamiento 1</label>
+                        </div>
+                        <div className="group_list">
+                            <input type="checkbox" id="entrenamiento2" name="entrenamiento 2" value="entrenamiento 2"  {...register("entrenamiento_2")} />
+                            <label htmlFor="entrenamiento2">entrenamiento 2</label>
+                        </div>
+                        <div className="group_list">
+                            <input type="checkbox" id="maniana" name="mañana" value="mañana"  {...register("maniana")} />
+                            <label htmlFor="maniana">mañana</label>
+                        </div>
+                    </div>
 
                     <div className="sistema-bajas-modif-botones">
                         <button type="submit" className="cuenta-button">Registrar evento</button>
@@ -126,6 +173,7 @@ export default function SystemEvents() {
                                         <th>Fecha Evento</th>
                                         <th>Nombre</th>
                                         <th>Decripción</th>
+                                        <th>Grupos</th>
                                         <th>Precio</th>
                                         <th></th>
                                     </tr>
@@ -138,6 +186,7 @@ export default function SystemEvents() {
                                                 <th>{new Date(event.event_date).toLocaleDateString('en-GB')}</th>
                                                 <th>{event.event_name}</th>
                                                 <th>{event.event_description}</th>
+                                                <th>{event.group_list}</th>
                                                 <th>{event.inscription_price}</th>
                                                 <th className="edit-event-buttons-container"> {/* <button className="delete-event-button" onClick={() => { deleteEvent(event.id_event) }}>Borrar</button> */}
                                                     {<NavLink to={`/updateevent/${event.id_event}`} className="edit-event-button" >Editar</NavLink>}</th>

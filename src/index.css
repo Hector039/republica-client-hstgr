@@ -820,6 +820,21 @@ select {
   width: 100%;
 }
 
+.group_list_container{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.group_list{
+  display: flex;
+  align-items: center;
+  
+}
+
+.group_list input{
+  width: 40px;
+}
 
 @media (max-width: 768px) {
 

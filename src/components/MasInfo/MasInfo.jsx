@@ -62,7 +62,17 @@ export default function MasInfo() {
     function fetchEvents() {
         axios.get(urlEvents)
             .then(response => {
-                setEvents(response.data);
+                
+                let userEventArray = [];
+                response.data.forEach(event => {
+                    const eventGroupArray = event.group_list.split(",");
+                    eventGroupArray.forEach(group => { 
+                        if (group == user.user_group) userEventArray.push(event)
+                    })
+                });
+                
+                setEvents(userEventArray);
+                
             })
             .catch(error => {
                 console.log(error);
@@ -269,7 +279,7 @@ export default function MasInfo() {
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Fecha de publicación</th>
+                                    {/* <th>Fecha de publicación</th> */}
                                     <th>Fecha del evento</th>
                                     <th>Nombre</th>
                                     <th>Descripción</th>
@@ -282,7 +292,7 @@ export default function MasInfo() {
                                 {
                                     events.map((event) => (
                                         <tr key={event.id_event}>
-                                            <th>{new Date(event.publication_date).toLocaleDateString('en-GB')}</th>
+                                            {/* <th>{new Date(event.publication_date).toLocaleDateString('en-GB')}</th> */}
                                             <th>{new Date(event.event_date).toLocaleDateString('en-GB')}</th>
                                             <th>{event.event_name}</th>
                                             <th>{event.event_description}</th>
@@ -296,7 +306,7 @@ export default function MasInfo() {
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Fecha de publicación</th>
+                                    {/* <th>Fecha de publicación</th> */}
                                     <th>Fecha del evento</th>
                                     <th>Nombre</th>
                                     <th>Descripción</th>
@@ -306,7 +316,7 @@ export default function MasInfo() {
                             </thead>
                             <tbody>
                                 <tr >
-                                    <th>dd/mm/aaaa</th>
+                                    {/* <th>dd/mm/aaaa</th> */}
                                     <th>dd/mm/aaaa</th>
                                     <th>próximamente</th>
                                     <th>xxxxxxxxxxxx</th>
