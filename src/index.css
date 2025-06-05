@@ -836,6 +836,39 @@ select {
   width: 40px;
 }
 
+.cuenta-button-ingreso{
+  padding: 10px;
+  background: rgb(6, 167, 0);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  text-decoration: none;
+}
+
+.cuenta-button-egreso{
+  padding: 10px;
+  background: rgb(179, 80, 0);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  text-decoration: none;
+}
+
+.cuenta-button-ingreso:hover {
+  background: rgba(9, 255, 0, 0.589);
+}
+.cuenta-button-egreso:hover {
+  background: rgba(255, 115, 0, 0.603);
+}
+
 @media (max-width: 768px) {
 
   .navbar-menu {

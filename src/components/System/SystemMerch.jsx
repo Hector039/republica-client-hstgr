@@ -19,10 +19,12 @@ export default function SystemMerch() {
     const [merchRequests, setMerchReq] = useState([])
     const [amounts, setAmounts] = useState({});
     const [featurePosition, setFeaturePosition] = useState(0);
+    const [userSearch, setUserSearch] = useState(false);
 
     const {
         register,
         handleSubmit,
+        setValue,
     } = useForm({
         mode: "onBlur",
     });
@@ -155,6 +157,17 @@ export default function SystemMerch() {
         });
     }
 
+        function changeUserSearch(value) {
+        if (value === "pay_date") {
+            setUserSearch(true)
+            setValue("value", date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0"));
+        }else {
+            setUserSearch(false)
+            setValue("value", '');
+        }
+    }
+
+
     return (
         <div className="system_incs_container">
             {featurePosition ? <button className="is_open" onClick={() => { openCloseFeatures(1, featurePosition) }}>Solicitudes habilitadas</button> :
@@ -164,19 +177,22 @@ export default function SystemMerch() {
 
             <form onSubmit={handleSubmit(getMerchUsers)} className="checkout-form">
                 <label>Buscar usuario por:
-                    <select {...register("search")}>
+                    <select {...register("search")} onChange={e => { changeUserSearch(e.target.value) }}>
                         <option value="last_name" defaultChecked>Apellido</option>
                         <option value="first_name">Nombre</option>
                         <option value="dni">DNI</option>
                         <option value="user_group">Grupo</option>
                         <option value="user_status">Estado (0 o 1)</option>
                         <option value="req_description">Descripción</option>
+                        <option value="pay_date">Fecha de pago</option>
                         <option value="TODO">Todo</option>
                     </select>
                 </label>
-                <label>Comienza con:
+                {userSearch ? 
+                <input type="date" name="value" {...register("value")} />
+                : <label>Comienza con:
                     <input type="text" name="value" placeholder="Ingresa tu búsqueda..." {...register("value")} />
-                </label>
+                </label>}
                 <button type="submit" className="cuenta-button">Buscar</button>
             </form>
 

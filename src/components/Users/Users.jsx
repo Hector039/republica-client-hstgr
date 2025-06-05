@@ -18,6 +18,7 @@ const urlAdminNotifications = "utils/notifications"
 const urlNotifyAnnualDebtor = "annualpayments/notifydebtor/"
 const urlNotifyMonthlyDebtor = "monthlypayments/notifydebtor/"
 const urlNewExpenditure = "utils/expenditures/"
+const urlNewIncome = "utils/income/"
 
 export default function Users() {
     const navigate = useNavigate();
@@ -36,6 +37,14 @@ export default function Users() {
         register: register4,
         handleSubmit: handleSubmit4,
         reset
+    } = useForm({
+        mode: "onBlur",
+    });
+
+    const {
+        register: register5,
+        handleSubmit: handleSubmit5,
+        reset: reset5
     } = useForm({
         mode: "onBlur",
     });
@@ -189,6 +198,18 @@ export default function Users() {
             })
     }
 
+    function newIncome(e) {
+        axios.post(urlNewIncome, { descr: e.descr, amount: e.amount, payDate: payDate })
+            .then(response => {
+                toast.success('Se registró el ingreso.');
+                reset5();
+            })
+            .catch(error => {
+                console.log(error);
+                toast.error('Ocurrió un error inesperado');
+            })
+    }
+
     return (
         <section className="cuenta-info">
             {
@@ -249,11 +270,19 @@ export default function Users() {
 
                         {user.is_admin === 1 &&
                             <div className="user-info-container">
+
+                                <h2>Ingresos:</h2>
+                                <form onSubmit={handleSubmit5(newIncome)} className="checkout-form">
+                                    <input type="text" name="descr" placeholder="Descripción o motivo" {...register5("descr", { required: true })} />
+                                    <input type="number" name="amount" min={"0"} defaultValue={0} placeholder="Monto" {...register5("amount", { required: true })} />
+                                    <button type="submit" className="cuenta-button-ingreso">Nuevo ingreso</button>
+                                </form>
+
                                 <h2>Egresos:</h2>
                                 <form onSubmit={handleSubmit4(newExpenditure)} className="checkout-form">
                                     <input type="text" name="descr" placeholder="Descripción o motivo" {...register4("descr", { required: true })} />
                                     <input type="number" name="amount" min={"0"} defaultValue={0} placeholder="Monto" {...register4("amount", { required: true })} />
-                                    <button type="submit" className="cuenta-button">Ingresar egreso</button>
+                                    <button type="submit" className="cuenta-button-egreso">Nuevo egreso</button>
                                 </form>
 
                                 <NavLink to={`/daily`} className="get-debtors-button">Consultar caja diaria</NavLink>

@@ -12,6 +12,7 @@ const urlMonthlyAnnualInfo = "utils/monthlyannual/"
 const urlMonthlyInscriptionsInfo = "utils/monthlyinscriptions/"
 const urlMonthlyRequestsInfo = "utils/monthlyrequests/"
 const urlMonthlyExpendituresInfo = "utils/monthlyexpenditures/"
+const urlMonthlyIncomeInfo = "utils/monthlyincome/"
 const urlInfo = "utils/getmonthgridinfo/"
 
 export default function Monthly() {
@@ -19,6 +20,7 @@ export default function Monthly() {
     const today = date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0");
 
     const [totalExpenditures, setTotalExpenditures] = useState(0);
+    const [totalIncome, setTotalIncome] = useState(0);
     const [totalMonth, setTotalMonth] = useState(0)
 
     const [clubInfo, setClubInfo] = useState([])
@@ -27,6 +29,7 @@ export default function Monthly() {
     const [inscriptionInfo, setInscriptionInfo] = useState([])
     const [requestsInfo, setRequestsInfo] = useState([])
     const [expendituresInfo, setExpendituresInfo] = useState([])
+    const [incomeInfo, setIncomeInfo] = useState([])
 
     const [info, setInfo] = useState([])
 
@@ -118,6 +121,19 @@ export default function Monthly() {
             })
     }
 
+    function getIncomeInfo(month) {
+        axios.get(urlMonthlyIncomeInfo + month)
+            .then(response => {
+                setIncomeInfo(response.data);
+                const total = response.data.reduce((acc, item) => acc + parseInt(item.amount), 0);
+                setTotalIncome(total)
+            })
+            .catch(error => {
+                console.log(error);
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+            })
+    }
+
     function updateTotal(data) {
         const total = data.reduce((acc, item) => acc + parseInt(item.total), 0);
         setTotalMonth(prev => prev + total);
@@ -132,6 +148,7 @@ export default function Monthly() {
         getInscriptionInfo(e.month);
         getRequestsInfo(e.month);
         getExpendituresInfo(e.month);
+        getIncomeInfo(e.month);
 
         getInfo(e.month);
     }
@@ -150,6 +167,7 @@ export default function Monthly() {
                     <thead>
                         <tr>
                             <th>Total cuotas</th>
+                            <th>Ingresos</th>
                             <th>Egresos</th>
                             <th>Balance del Mes</th>
                         </tr>
@@ -157,8 +175,9 @@ export default function Monthly() {
                     <tbody>
                         <tr >
                             <th>{totalMonth}</th>
+                            <th>{totalIncome}</th>
                             <th>{totalExpenditures}</th>
-                            <th>{totalMonth - totalExpenditures}</th>
+                            <th>{totalMonth + totalIncome - totalExpenditures}</th>
                         </tr>
                     </tbody>
                 </table>}
@@ -299,6 +318,42 @@ export default function Monthly() {
                             </tr>
                         </tfoot>
                     </table>}
+
+                    <h2>Ingresos:</h2>
+                {incomeInfo.length === 0 ? <p className="info-text-register">Sin datos</p> :
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                                <th>Monto</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {
+                                incomeInfo.map((inc) => (
+                                    <tr key={inc.id_inc}>
+                                        <th>{new Date(inc.pay_date).toLocaleDateString('en-GB')}</th>
+                                        <th>{inc.descr}</th>
+                                        <th>{inc.amount}</th>
+                                        <th></th>
+                                    </tr>
+                                ))
+                            }
+
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th>${(incomeInfo.reduce((acumulador, item) => acumulador + item.amount, 0))}</th>
+                            </tr>
+                        </tfoot>
+                    </table>}
+
                 <h2>Grilla por días:</h2>
                 {info.length === 0 ? <p className="info-text-register">Sin datos</p> :
                     <table>

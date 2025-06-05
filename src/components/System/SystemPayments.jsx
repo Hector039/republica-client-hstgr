@@ -20,10 +20,12 @@ export default function SystemPayments() {
     const [userDates, setUserDates] = useState({});
     const [monthAmounts, setMonthAmounts] = useState({});
     const [annualAmounts, setAnnualAmounts] = useState({});
+    const [userSearch, setUserSearch] = useState(false);
 
     const {
         register,
         handleSubmit,
+        setValue,
     } = useForm({
         mode: "onBlur",
     });
@@ -116,24 +118,42 @@ export default function SystemPayments() {
         }
     }, []);
 
+    
+        function changeUserSearch(value) {
+            
+            if (value === "monthly_pay_date" || value === "annual_pay_date") {
+            console.log(value);
+            setUserSearch(true)
+            setValue("value", date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0"));
+        }else {
+            setUserSearch(false)
+            setValue("value", '');
+        }
+    }
+
+
     return (
         <div className="carrito">
             <h1>Gestión de pagos:</h1>
 
             <form onSubmit={handleSubmit(getUsers)} className="checkout-form">
                 <label>Buscar usuario por:
-                    <select {...register("search")}>
+                    <select {...register("search")} onChange={e => { changeUserSearch(e.target.value) }}>
                         <option value="last_name" defaultChecked>Apellido</option>
                         <option value="first_name">Nombre</option>
                         <option value="dni">DNI</option>
                         <option value="user_group">Grupo</option>
                         <option value="user_status">Estado (0 o 1)</option>
+                        <option value="monthly_pay_date">Fecha de pago cuota</option>
+                        <option value="annual_pay_date">Fecha de pago matrícula</option>
                         <option value="TODO">Todo</option>
                     </select>
                 </label>
-                <label>Comienza con:
+                {userSearch ? 
+                <input type="date" name="value" {...register("value")} />
+                : <label>Comienza con:
                     <input type="text" name="value" placeholder="Ingresa tu búsqueda..." {...register("value")} />
-                </label>
+                </label>}
                 <button type="submit" className="cuenta-button">Buscar</button>
             </form>
 
@@ -166,14 +186,17 @@ export default function SystemPayments() {
                                         <th>{new Date(user.register_date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</th>
                                         <th>{user.user_status ? "ACTIVO" : "INACTIVO"}</th>
                                         <th>{user.fee_descr}</th>
-                                        <th><div className="unpaid_container">
+
+                                        <th>{userSearch ? 'Sin datos' : <div className="unpaid_container">
                                             <p>{user.last_unpaid_month ? user.last_unpaid_month : "---"}/{user.last_unpaid_month_year ? user.last_unpaid_month_year : "---"}</p>
                                             <p>{user.last_unpaid_year ? user.last_unpaid_year : "---"}</p>
-                                        </div></th>
-                                        <th><div className="unpaid_container">
+                                        </div>}</th>.
+
+                                        <th>{userSearch ? 'Sin datos' : <div className="unpaid_container">
                                             <p>{user.last_unpaid_month_amount ? "$" + user.last_unpaid_month_amount : "---"}</p>
                                             <p>{user.last_unpaid_amount ? "$" + user.last_unpaid_amount : "---"}</p>
-                                        </div></th>
+                                        </div>}</th>
+                                        
                                         <th><form onSubmit={e => handleSubmit2(e, user.id_user, user.fee_month, user.fee_annual)} >
 
                                             <input
