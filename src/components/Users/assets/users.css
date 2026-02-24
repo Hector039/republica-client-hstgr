@@ -194,3 +194,9 @@ input {
     font-weight: bold;
     font-size: 1em !important;
 }
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

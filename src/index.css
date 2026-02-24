@@ -812,7 +812,7 @@ select {
   gap: 10px;
 }
 
-.label_birthdate{
+.label_birthdate {
   color: black;
   display: flex;
   flex-direction: column;
@@ -820,23 +820,23 @@ select {
   width: 100%;
 }
 
-.group_list_container{
+.group_list_container {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.group_list{
+.group_list {
   display: flex;
   align-items: center;
-  
+
 }
 
-.group_list input{
+.group_list input {
   width: 40px;
 }
 
-.cuenta-button-ingreso{
+.cuenta-button-ingreso {
   padding: 10px;
   background: rgb(6, 167, 0);
   color: white;
@@ -849,7 +849,7 @@ select {
   text-decoration: none;
 }
 
-.cuenta-button-egreso{
+.cuenta-button-egreso {
   padding: 10px;
   background: rgb(179, 80, 0);
   color: white;
@@ -865,8 +865,19 @@ select {
 .cuenta-button-ingreso:hover {
   background: rgba(9, 255, 0, 0.589);
 }
+
 .cuenta-button-egreso:hover {
   background: rgba(255, 115, 0, 0.603);
+}
+
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+}
+
+.check_box {
+  width: 40px;
 }
 
 @media (max-width: 768px) {

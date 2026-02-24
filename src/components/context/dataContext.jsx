@@ -1,31 +1,84 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import axios from "../../config/axiosConfig";
-import { toast } from 'react-toastify';
 
-const UserContext = createContext(null);
-const urlUser = "users/"
+const UserContext = createContext(undefined);
+
+const USER_STORAGE_KEY = "user";
+const TOKEN_STORAGE_KEY = "token";
 
 export const UserProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+	const [user, setUserState] = useState(() => {
+		const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+		return storedUser ? JSON.parse(storedUser) : null;
+	});
+	const [isLoggedIn, setIsLoggedIn] = useState(() => {
+		return !!localStorage.getItem(TOKEN_STORAGE_KEY);
+	});
 
-    useEffect(() => {
-        function axiosData() {
-                axios.get(urlUser)
-                    .then(response => {
-                        setUser(response.data);
-                    })
-                    .catch(error => {
-                        toast.error(error);
-                    })
-        }
-        axiosData();
-    }, [])
+	const setUser = (userData) => {
+		if (userData) {
+			localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+			setIsLoggedIn(true);
+		} else {
+			localStorage.removeItem(USER_STORAGE_KEY);
+			localStorage.removeItem(TOKEN_STORAGE_KEY);
+			setIsLoggedIn(false);
+		}
+		setUserState(userData);
+	};
 
-    return (
-        <UserContext.Provider value={{ user, setUser }}>
-            {children}
-        </UserContext.Provider>
-    );
+	/* 	const loadUser = () => {
+		try {
+			const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+			if (storedUser) {
+				setUserState(JSON.parse(storedUser));
+				setIsLoggedIn(true);
+				return;
+			}
+			setUserState(null);
+			setIsLoggedIn(false);
+		} catch (error) {
+			console.error("Error cargando usuario desde AsyncStorage:", error);
+		}
+	}; */
+
+	const checkLoginStatus = async () => {
+		try {
+			const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+			if (!token) {
+				setIsLoggedIn(false);
+				return;
+			}
+			setIsLoggedIn(true);
+		} catch (error) {
+			console.error("Error validando token:", error);
+			setIsLoggedIn(false);
+		}
+	};
+
+	const logout = async () => {
+		setUser(null);
+	};
+
+	useEffect(() => {
+		checkLoginStatus();
+	}, []);
+
+	const value = {
+		user,
+		setUser,
+		isLoggedIn,
+		logout,
+	};
+
+	return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 
-export const useUser = () => useContext(UserContext);
+export const useUser = () => {
+	const context = useContext(UserContext);
+
+	if (context === undefined) {
+		throw new Error("useUser debe ser usado dentro de un UserProvider");
+	}
+
+	return context;
+};

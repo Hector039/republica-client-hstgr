@@ -58,7 +58,7 @@ export default function SystemEvents() {
         fetchEvents();
         fetchPositions();
     }, []);
-    /* 
+
         function deleteEvent(eid) {
             axios.delete(urlEvents + eid, { withCredentials: true })
                 .then(response => {
@@ -70,7 +70,7 @@ export default function SystemEvents() {
                     console.log(error)
                 })
         }
-     */
+
     const newEvent = (e) => {
         const groupArray = [e.peques_1, e.peques_2, e.gimnasia_1, e.gimnasia_2, e.gimnasia_3, e.gimnasia_4, e.gimnasia_5, e.entrenamiento_1, e.entrenamiento_2, e.maniana]
         const groupsCleaned = groupArray.filter(group => group !== false)
@@ -188,8 +188,9 @@ export default function SystemEvents() {
                                                 <th>{event.event_description}</th>
                                                 <th>{event.group_list}</th>
                                                 <th>{event.inscription_price}</th>
-                                                <th className="edit-event-buttons-container"> {/* <button className="delete-event-button" onClick={() => { deleteEvent(event.id_event) }}>Borrar</button> */}
-                                                    {<NavLink to={`/updateevent/${event.id_event}`} className="edit-event-button" >Editar</NavLink>}</th>
+                                                <th className="edit-event-buttons-container"> 
+                                                    <button className="delete-event-button" onClick={() => deleteEvent(event.id_event)}>Borrar</button>
+                                                    <NavLink to={`/updateevent/${event.id_event}`} className="edit-event-button" >Editar</NavLink></th>
                                             </tr>
                                         ))
                                     }
